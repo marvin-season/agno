@@ -224,6 +224,7 @@ knowledge = Knowledge(
     contents_db=contents_db,
     vector_db=vector_db,
     # Register content sources - mix of class instances and dicts
+    storage_bucket = specifically s3/gcs/azure blob storage
     content_sources=[
         # S3 bucket with IAM credentials (from env)
         S3ContentSource(
