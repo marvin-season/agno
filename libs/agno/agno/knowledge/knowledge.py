@@ -2935,7 +2935,11 @@ class Knowledge:
 
     # Shared context strings
     _KNOWLEDGE_BASE_SEARCH_INSTRUCTION = (
-        "You have access to a knowledge base. Use the search_knowledge_base tool to find relevant information."
+        "You have access to a knowledge base.\n"
+        "IMPORTANT: For any user question that could be answered from the knowledge base, you MUST call the "
+        "search_knowledge_base tool before responding.\n"
+        "If the user question is ambiguous (e.g., 'the candidate') do NOT ask clarifying questions first—search the "
+        "knowledge base to identify the relevant documents.\n"
     )
 
     _AGENTIC_FILTER_INSTRUCTION_TEMPLATE = """
@@ -3294,6 +3298,7 @@ Make sure to pass the filters as [Dict[str: Any]] to the tool. FOLLOW THIS STRUC
             func = Function.from_callable(asearch_knowledge_base, name="search_knowledge_base")
         else:
             func = Function.from_callable(search_knowledge_base, name="search_knowledge_base")
+
         # Opt out of strict mode since filters use dynamic types that are incompatible with strict mode
         func.strict = False
         return func

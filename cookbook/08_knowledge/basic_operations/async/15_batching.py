@@ -6,15 +6,12 @@ import asyncio
 
 from agno.agent import Agent  # noqa
 from agno.db.postgres.postgres import PostgresDb
-from agno.knowledge.embedder.openai import OpenAIEmbedder
 from agno.knowledge.knowledge import Knowledge
 from agno.vectordb.pgvector import PgVector
 
 vector_db = PgVector(
-    db_url="postgresql+psycopg://ai:ai@localhost:5532/ai",
-    table_name="vectors",
+    table_name="vectors", db_url="postgresql+psycopg://ai:ai@localhost:5532/ai"
 )
-
 contents_db = PostgresDb(
     db_url="postgresql+psycopg://ai:ai@localhost:5532/ai",
     knowledge_table="knowledge_contents",
