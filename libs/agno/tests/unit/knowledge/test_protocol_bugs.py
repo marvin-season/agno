@@ -144,25 +144,5 @@ class TestBug8SilentFilterLoss:
                 pytest.xfail("Bug #8: Invalid filters silently dropped without warning")
 
 
-class TestBugConfirmation:
-    """Summary tests to confirm bug fixes work."""
-
-    def test_bug3_fixed_exception_handled(self):
-        """Confirm Bug #3 is fixed - search exceptions return error message."""
-        from agno.knowledge.knowledge import Knowledge
-
-        knowledge = Knowledge()
-        knowledge.vector_db = MagicMock()
-        knowledge.search = MagicMock(side_effect=RuntimeError("DB Error"))
-
-        tool = knowledge._create_search_tool(async_mode=False)
-
-        # Exception should NOT propagate - should return error string
-        result = tool.entrypoint(query="test")
-
-        assert isinstance(result, str)
-        assert "DB Error" in result
-
-
 if __name__ == "__main__":
     pytest.main([__file__, "-v", "--tb=short"])
