@@ -806,7 +806,13 @@ class Knowledge:
                     log_warning(f"Invalid filter key: {key} - not present in knowledge base")
 
         elif isinstance(filters, List):
-            # Validate that list contains FilterExpr instances
+            # Validate list filters against known metadata keys
+            if valid_metadata_filters is None or not valid_metadata_filters:
+                # Can't validate keys without metadata - return original list
+                log_warning("No valid metadata filters tracked yet. Cannot validate list filter keys.")
+                return filters, []
+
+            valid_list_filters: List[FilterExpr] = []
             for i, filter_item in enumerate(filters):
                 if not isinstance(filter_item, FilterExpr):
                     log_warning(
@@ -815,9 +821,23 @@ class Knowledge:
                         f"Use filter expressions like EQ('key', 'value'), IN('key', [values]), "
                         f"AND(...), OR(...), NOT(...) from agno.filters"
                     )
-            # Filter expressions are already validated, return empty dict/list
-            # The actual filtering happens in the vector_db layer
-            return filters, []
+                    continue
+
+                # Check if filter has a key attribute and validate it
+                if hasattr(filter_item, "key"):
+                    key = filter_item.key
+                    base_key = key.split(".")[-1] if "." in key else key
+                    if base_key in valid_metadata_filters or key in valid_metadata_filters:
+                        valid_list_filters.append(filter_item)
+                    else:
+                        invalid_keys.append(key)
+                        log_warning(f"Invalid filter key: {key} - not present in knowledge base")
+                else:
+                    # Complex filters (AND, OR, NOT) - keep them as-is
+                    # They contain nested filters that will be validated by the vector DB
+                    valid_list_filters.append(filter_item)
+
+            return valid_list_filters, invalid_keys
 
         return valid_filters, invalid_keys
 
@@ -3110,7 +3130,12 @@ Make sure to pass the filters as [Dict[str: Any]] to the tool. FOLLOW THIS STRUC
             retrieval_timer = Timer()
             retrieval_timer.start()
 
-            docs = self.search(query=query, filters=knowledge_filters)
+            try:
+                docs = self.search(query=query, filters=knowledge_filters)
+            except Exception as e:
+                retrieval_timer.stop()
+                log_warning(f"Knowledge search failed: {e}")
+                return f"Error searching knowledge base: {e}"
 
             if run_response is not None and docs:
                 references = MessageReferences(
@@ -3142,7 +3167,12 @@ Make sure to pass the filters as [Dict[str: Any]] to the tool. FOLLOW THIS STRUC
             retrieval_timer = Timer()
             retrieval_timer.start()
 
-            docs = await self.asearch(query=query, filters=knowledge_filters)
+            try:
+                docs = await self.asearch(query=query, filters=knowledge_filters)
+            except Exception as e:
+                retrieval_timer.stop()
+                log_warning(f"Knowledge search failed: {e}")
+                return f"Error searching knowledge base: {e}"
 
             if run_response is not None and docs:
                 references = MessageReferences(
@@ -3220,7 +3250,12 @@ Make sure to pass the filters as [Dict[str: Any]] to the tool. FOLLOW THIS STRUC
             retrieval_timer = Timer()
             retrieval_timer.start()
 
-            docs = self.search(query=query, filters=search_filters)
+            try:
+                docs = self.search(query=query, filters=search_filters)
+            except Exception as e:
+                retrieval_timer.stop()
+                log_warning(f"Knowledge search failed: {e}")
+                return f"Error searching knowledge base: {e}"
 
             if run_response is not None and docs:
                 references = MessageReferences(
@@ -3274,7 +3309,12 @@ Make sure to pass the filters as [Dict[str: Any]] to the tool. FOLLOW THIS STRUC
             retrieval_timer = Timer()
             retrieval_timer.start()
 
-            docs = await self.asearch(query=query, filters=search_filters)
+            try:
+                docs = await self.asearch(query=query, filters=search_filters)
+            except Exception as e:
+                retrieval_timer.stop()
+                log_warning(f"Knowledge search failed: {e}")
+                return f"Error searching knowledge base: {e}"
 
             if run_response is not None and docs:
                 references = MessageReferences(
