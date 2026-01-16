@@ -1,11 +1,11 @@
 """Tests to verify potential bugs in Knowledge Protocol implementation."""
 
-from typing import Any, Dict, List, Set
+from typing import Set
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from agno.filters import EQ, FilterExpr
+from agno.filters import EQ
 from agno.knowledge.document import Document
 
 
@@ -129,7 +129,7 @@ class TestBug8SilentFilterLoss:
 
         with patch("agno.knowledge.knowledge.log_warning") as mock_warn:
             # Pass mix of valid and invalid filters
-            result = tool.entrypoint(query="test", filters=[{"valid": "filter"}, invalid_filter])
+            tool.entrypoint(query="test", filters=[{"valid": "filter"}, invalid_filter])
 
             # BUG #8: No warning logged for invalid filter
             # After fix, should log warning
