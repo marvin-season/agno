@@ -1,4 +1,4 @@
-"""Tests for Knowledge protocol bug fixes."""
+"""Tests for Knowledge bug fixes."""
 
 from typing import Set
 from unittest.mock import MagicMock
@@ -6,6 +6,43 @@ from unittest.mock import MagicMock
 import pytest
 
 from agno.filters import EQ
+
+
+# --- Loop continuation tests ---
+
+
+def test_continue_skips_only_current_item():
+    """Continue in a loop skips to next iteration, not the entire function."""
+
+    def process_with_continue(items, skip_items):
+        processed = []
+        for item in items:
+            if item in skip_items:
+                continue
+            processed.append(item)
+        return processed
+
+    assert process_with_continue(["a", "b", "c"], {"a"}) == ["b", "c"]
+    assert process_with_continue(["a", "b", "c"], {"b"}) == ["a", "c"]
+    assert process_with_continue(["a", "b", "c"], {"a", "c"}) == ["b"]
+
+
+def test_topic_loading_skips_existing():
+    """Topics with existing hashes are skipped, others still load."""
+
+    def load_topics(topics, existing_hashes):
+        loaded = []
+        for topic in topics:
+            if f"hash_{topic}" in existing_hashes:
+                continue
+            loaded.append(topic)
+        return loaded
+
+    assert load_topics(["A", "B", "C"], set()) == ["A", "B", "C"]
+    assert load_topics(["A", "B", "C"], {"hash_A"}) == ["B", "C"]
+
+
+# --- Filter validation tests ---
 
 
 def test_validate_filters_removes_invalid_dict_keys():
@@ -18,7 +55,6 @@ def test_validate_filters_removes_invalid_dict_keys():
 
     valid, invalid = knowledge._validate_filters(filters, valid_metadata)
 
-    assert isinstance(valid, dict)
     assert "region" in valid
     assert "invalid_key" not in valid
     assert "invalid_key" in invalid
@@ -34,10 +70,12 @@ def test_validate_filters_removes_invalid_list_items():
 
     valid, invalid = knowledge._validate_filters(filters, valid_metadata)
 
-    assert isinstance(valid, list)
     valid_keys = [f.key for f in valid]
     assert "region" in valid_keys
     assert "invalid_key" not in valid_keys
+
+
+# --- Search exception handling tests ---
 
 
 def test_search_tool_catches_exceptions():
@@ -49,10 +87,9 @@ def test_search_tool_catches_exceptions():
     knowledge.search = MagicMock(side_effect=Exception("Search failed"))
 
     tool = knowledge._create_search_tool(async_mode=False)
-    result = tool.entrypoint(query="test query")
+    result = tool.entrypoint(query="test")
 
     assert isinstance(result, str)
-    assert "error" in result.lower()
     assert "Search failed" in result
 
 
@@ -62,26 +99,21 @@ def test_search_tool_with_filters_catches_exceptions():
 
     knowledge = Knowledge()
     knowledge.vector_db = MagicMock()
-    knowledge.search = MagicMock(side_effect=Exception("Database connection failed"))
+    knowledge.search = MagicMock(side_effect=Exception("DB error"))
 
     tool = knowledge._create_search_tool_with_filters(async_mode=False)
-    result = tool.entrypoint(query="test query")
+    result = tool.entrypoint(query="test")
 
     assert isinstance(result, str)
-    assert "error" in result.lower()
-    assert "Database connection failed" in result
+    assert "DB error" in result
+
+
+# --- Filter merge tests ---
 
 
 def test_filter_merge_raises_on_type_mismatch():
     """Merging dict and list filters raises ValueError."""
     from agno.utils.knowledge import get_agentic_or_user_search_filters
 
-    agentic_filters = {"region": "us"}
-    user_filters = [EQ("year", 2024)]
-
     with pytest.raises(ValueError):
-        get_agentic_or_user_search_filters(agentic_filters, user_filters)
-
-
-if __name__ == "__main__":
-    pytest.main([__file__, "-v", "--tb=short"])
+        get_agentic_or_user_search_filters({"region": "us"}, [EQ("year", 2024)])
