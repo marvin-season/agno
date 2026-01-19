@@ -15,7 +15,7 @@ model = Claude(id="claude-sonnet-4@20250514", betas=betas)
 # Note: you can see all beta features available in your Anthropic version like this:
 all_betas = anthropic.types.AnthropicBetaParam
 print("\n=== All available Anthropic beta features ===")
-print(f"- {'\n- '.join(all_betas.__args__[1].__args__)}")
+print("- " + "\n- ".join(all_betas.__args__[1].__args__))
 print("=============================================\n")
 
 print(
