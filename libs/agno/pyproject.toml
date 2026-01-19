@@ -186,7 +186,7 @@ a2a = ["a2a-sdk"]
 huggingface = [
     "huggingface-hub",
 ]
-fastembed = ["fastembed"]
+fastembed = ["fastembed>=0.5.0"]
 
 # Dependencies for Performance
 performance = ["memory_profiler"]
