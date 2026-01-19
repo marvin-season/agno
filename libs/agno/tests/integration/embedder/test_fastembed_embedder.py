@@ -64,6 +64,7 @@ def test_embedding_consistency(embedder):
 def test_custom_client_injection():
     """Test that users can inject a custom fastembed client."""
     from unittest.mock import MagicMock
+
     import numpy as np
 
     mock_client = MagicMock()
