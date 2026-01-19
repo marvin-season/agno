@@ -32,9 +32,6 @@ asyncio.run(
     )
 )
 
-agent = Agent(
-    knowledge=knowledge,
-    instructions="You are a helpful assistant that can answer questions about the documents in the knowledge base.",
-)
+agent = Agent(knowledge=knowledge)
 
 agent.print_response("What documents are in the knowledge base?", markdown=True)
