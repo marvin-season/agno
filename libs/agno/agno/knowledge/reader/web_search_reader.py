@@ -262,6 +262,9 @@ class WebSearchReader(Reader):
 
     async def async_read(self, query: str) -> List[Document]:
         """Asynchronously read content for a given query"""
+        # Reset state for each query
+        self._visited_urls.clear()
+
         if not query:
             raise ValueError("Query cannot be empty")
 
