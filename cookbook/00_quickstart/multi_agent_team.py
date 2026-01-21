@@ -24,7 +24,7 @@ Example prompts to try:
 
 from agno.agent import Agent
 from agno.db.sqlite import SqliteDb
-from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 from agno.team.team import Team
 from agno.tools.yfinance import YFinanceTools
 
@@ -39,7 +39,7 @@ team_db = SqliteDb(db_file="tmp/agents.db")
 bull_agent = Agent(
     name="Bull Analyst",
     role="Make the investment case FOR a stock",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     tools=[YFinanceTools()],
     db=team_db,
     instructions="""\
@@ -63,7 +63,7 @@ Be persuasive but grounded in data. Use the tools to get real numbers.\
 bear_agent = Agent(
     name="Bear Analyst",
     role="Make the investment case AGAINST a stock",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     tools=[YFinanceTools()],
     db=team_db,
     instructions="""\
@@ -86,7 +86,7 @@ Be critical but fair. Use the tools to get real numbers to support your concerns
 # ============================================================================
 multi_agent_team = Team(
     name="Multi-Agent Team",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     members=[bull_agent, bear_agent],
     instructions="""\
 You lead an investment research team with a Bull Analyst and Bear Analyst.

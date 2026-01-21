@@ -27,7 +27,7 @@ from agno.agent import Agent
 from agno.exceptions import InputCheckError
 from agno.guardrails import PIIDetectionGuardrail, PromptInjectionGuardrail
 from agno.guardrails.base import BaseGuardrail
-from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 from agno.run.agent import RunInput
 from agno.run.team import TeamRunInput
 from agno.tools.yfinance import YFinanceTools
@@ -89,7 +89,7 @@ Never share sensitive personal information in responses.\
 # ============================================================================
 agent_with_guardrails = Agent(
     name="Agent with Guardrails",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     instructions=instructions,
     tools=[YFinanceTools()],
     pre_hooks=[

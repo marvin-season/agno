@@ -20,7 +20,7 @@ Example prompts to try:
 
 from agno.agent import Agent
 from agno.db.sqlite import SqliteDb
-from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 from agno.tools.yfinance import YFinanceTools
 from agno.workflow import Step, Workflow
 
@@ -34,7 +34,7 @@ workflow_db = SqliteDb(db_file="tmp/agents.db")
 # ============================================================================
 data_agent = Agent(
     name="Data Gatherer",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     tools=[YFinanceTools()],
     instructions="""\
 You are a data gathering agent. Your job is to fetch comprehensive market data.
@@ -65,7 +65,7 @@ data_step = Step(
 # ============================================================================
 analyst_agent = Agent(
     name="Analyst",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     instructions="""\
 You are a financial analyst. You receive raw market data from the data team.
 
@@ -94,7 +94,7 @@ analysis_step = Step(
 # ============================================================================
 report_agent = Agent(
     name="Report Writer",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     instructions="""\
 You are a report writer. You receive analysis from the research team.
 

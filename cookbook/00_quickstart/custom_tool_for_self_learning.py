@@ -26,7 +26,7 @@ from agno.db.sqlite import SqliteDb
 from agno.knowledge import Knowledge
 from agno.knowledge.embedder.google import GeminiEmbedder
 from agno.knowledge.reader.text_reader import TextReader
-from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 from agno.tools.yfinance import YFinanceTools
 from agno.vectordb.chroma import ChromaDb
 from agno.vectordb.search import SearchType
@@ -143,7 +143,7 @@ Don't save: Raw data, one-off facts, or obvious information.\
 # ============================================================================
 self_learning_agent = Agent(
     name="Self-Learning Agent",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     instructions=instructions,
     tools=[
         YFinanceTools(),

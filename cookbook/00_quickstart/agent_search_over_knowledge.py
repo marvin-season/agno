@@ -18,7 +18,7 @@ from agno.agent import Agent
 from agno.db.sqlite import SqliteDb
 from agno.knowledge.embedder.google import GeminiEmbedder
 from agno.knowledge.knowledge import Knowledge
-from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 from agno.vectordb.chroma import ChromaDb
 from agno.vectordb.search import SearchType
 
@@ -85,7 +85,7 @@ You are an expert on the Agno framework and building AI agents.
 # ============================================================================
 agent_with_knowledge = Agent(
     name="Agent with Knowledge",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     instructions=instructions,
     knowledge=knowledge,
     search_knowledge=True,

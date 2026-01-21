@@ -32,7 +32,7 @@ from agno.db.sqlite import SqliteDb
 from agno.knowledge.embedder.google import GeminiEmbedder
 from agno.knowledge.knowledge import Knowledge
 from agno.knowledge.reader.text_reader import TextReader
-from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 from agno.tools import tool
 from agno.tools.yfinance import YFinanceTools
 from agno.utils import pprint
@@ -140,7 +140,7 @@ Don't save: Raw data, one-off facts, or obvious information.\
 # ============================================================================
 human_in_the_loop_agent = Agent(
     name="Agent with Human in the Loop",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     instructions=instructions,
     tools=[
         YFinanceTools(),

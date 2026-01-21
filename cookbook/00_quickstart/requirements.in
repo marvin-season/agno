@@ -4,6 +4,7 @@ fastapi[standard]
 google-genai
 mcp
 nest_asyncio
+ollama
 openinference-instrumentation-agno
 opentelemetry-api
 opentelemetry-sdk

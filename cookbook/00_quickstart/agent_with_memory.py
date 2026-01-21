@@ -22,7 +22,7 @@ Example prompts to try:
 from agno.agent import Agent
 from agno.db.sqlite import SqliteDb
 from agno.memory import MemoryManager
-from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 from agno.tools.yfinance import YFinanceTools
 from rich.pretty import pprint
 
@@ -35,7 +35,7 @@ agent_db = SqliteDb(db_file="tmp/agents.db")
 # Memory Manager Configuration
 # ============================================================================
 memory_manager = MemoryManager(
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     db=agent_db,
     additional_instructions="""
     Capture the user's favorite stocks, their risk tolerance, and their investment goals.
@@ -87,7 +87,7 @@ user_id = "investor@example.com"
 
 agent_with_memory = Agent(
     name="Agent with Memory",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     instructions=instructions,
     tools=[YFinanceTools()],
     db=agent_db,

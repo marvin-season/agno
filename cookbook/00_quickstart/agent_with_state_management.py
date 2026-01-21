@@ -21,7 +21,7 @@ Example prompts to try:
 
 from agno.agent import Agent
 from agno.db.sqlite import SqliteDb
-from agno.models.google import Gemini
+from agno.models.ollama import Ollama
 from agno.run import RunContext
 from agno.tools.yfinance import YFinanceTools
 
@@ -111,7 +111,7 @@ You are a Finance Agent that manages a stock watchlist.
 # ============================================================================
 agent_with_state_management = Agent(
     name="Agent with State Management",
-    model=Gemini(id="gemini-3-flash-preview"),
+    model=Ollama(id="qwen2.5:3b"),
     instructions=instructions,
     tools=[
         add_to_watchlist,

@@ -98,8 +98,8 @@ https://github.com/user-attachments/assets/aae0086b-86f6-4939-a0ce-e1ec9b87ba1f
 Agno is model-agnostic. Same code, different provider:
 ```python
 # Gemini (default in these examples)
-from agno.models.google import Gemini
-model = Gemini(id="gemini-3-flash-preview")
+from agno.models.ollama import Ollama
+model = Ollama(id="qwen2.5:3b")
 
 # OpenAI
 from agno.models.openai import OpenAIChat
